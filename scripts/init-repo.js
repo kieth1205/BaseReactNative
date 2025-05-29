@@ -9,6 +9,8 @@ const __dirname = path.dirname(__filename);
 const GITHUB_USERNAME = 'kieth1205';
 const REPO_NAME = 'BaseReactNative';
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+const GIT_EMAIL = process.env.GIT_EMAIL || 'kieth1205@gmail.com';
+const GIT_NAME = process.env.GIT_NAME || 'kieth1205';
 
 if (!GITHUB_TOKEN) {
   console.error('Error: GITHUB_TOKEN environment variable is not set');
@@ -21,6 +23,11 @@ try {
   // Initialize git repository
   console.log('Initializing git repository...');
   execSync('git init');
+
+  // Configure git user
+  console.log('Configuring git user...');
+  execSync(`git config user.email "${GIT_EMAIL}"`);
+  execSync(`git config user.name "${GIT_NAME}"`);
 
   // Create .gitignore
   console.log('Creating .gitignore...');
