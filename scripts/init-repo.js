@@ -221,6 +221,16 @@ SOFTWARE.`;
   execSync('git add .');
   execSync('git commit -m "Initial commit"');
   execSync(`git branch -M main`);
+
+  // Check if remote origin exists and remove it if it does
+  try {
+    execSync('git remote get-url origin');
+    console.log('Remote origin exists, removing...');
+    execSync('git remote remove origin');
+  } catch (error) {
+    // Remote origin doesn't exist, continue
+  }
+
   execSync(`git remote add origin https://github.com/${GITHUB_USERNAME}/${REPO_NAME}.git`);
   execSync('git push -u origin main');
 
