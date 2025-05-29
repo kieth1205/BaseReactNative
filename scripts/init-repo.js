@@ -218,8 +218,17 @@ SOFTWARE.`;
 
   // Add remote and push
   console.log('Adding remote and pushing initial commit...');
-  execSync('git add .');
-  execSync('git commit -m "Initial commit"');
+
+  // Check if there are any changes to commit
+  const status = execSync('git status --porcelain').toString();
+  if (!status) {
+    console.log('No changes to commit. Creating an empty commit...');
+    execSync('git commit --allow-empty -m "Initial commit"');
+  } else {
+    execSync('git add .');
+    execSync('git commit -m "Initial commit"');
+  }
+
   execSync(`git branch -M main`);
 
   // Check if remote origin exists and remove it if it does
