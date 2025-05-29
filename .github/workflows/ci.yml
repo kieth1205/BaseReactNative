@@ -1,4 +1,4 @@
-name: CI
+name: CI/CD
 
 on:
   push:
@@ -16,11 +16,10 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Check commit count
+      - name: Check for multiple commits
         run: |
-          COMMIT_COUNT=$(git rev-list --count HEAD ^origin/develop)
-          if [ $COMMIT_COUNT -gt 1 ]; then
-            echo "::warning::Multiple commits detected. Please run 'yarn squash' to squash commits into one."
+          if [ "$(git rev-list --count HEAD)" -gt 1 ]; then
+            echo "Multiple commits detected. Please squash your commits."
             exit 1
           fi
 
@@ -31,51 +30,61 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Setup Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'yarn'
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install
       - name: Generate feature documentation
         run: yarn docs:features
       - name: Check for changes
         id: git-check
         run: |
-          git config --global user.name 'GitHub Actions'
-          git config --global user.email 'github-actions@github.com'
-          git add docs/features
-          git diff --quiet && git diff --staged --quiet || (git commit -m "docs: update feature documentation [skip ci]" && git push)
-        continue-on-error: true
+          git add .
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "Changes detected"
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          fi
+      - name: Commit and push if changes
+        if: steps.git-check.outputs.has_changes == 'true'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git commit -m "docs: update feature documentation"
+          git push
 
   test:
     needs: update-docs
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'yarn'
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install
       - name: Run tests
-        run: yarn test:ci
+        run: yarn test
 
   build-android:
     needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'yarn'
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install
       - name: Build Android
         run: |
           if [[ $GITHUB_REF == refs/tags/* ]]; then
@@ -83,24 +92,25 @@ jobs:
           else
             yarn build:android:dev
           fi
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: android-apk
-          path: android/app/build/outputs/apk/*/*.apk
+      - name: Send build notification
+        env:
+          TEAMS_WEBHOOK_URL: ${{ secrets.TEAMS_WEBHOOK_URL }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: node scripts/notify-build.js success
 
   build-ios:
     needs: test
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'yarn'
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install
       - name: Build iOS
         run: |
           if [[ $GITHUB_REF == refs/tags/* ]]; then
@@ -108,11 +118,12 @@ jobs:
           else
             yarn build:ios:dev
           fi
-      - name: Upload IPA
-        uses: actions/upload-artifact@v4
-        with:
-          name: ios-ipa
-          path: ios/build/*.ipa
+      - name: Send build notification
+        env:
+          TEAMS_WEBHOOK_URL: ${{ secrets.TEAMS_WEBHOOK_URL }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: node scripts/notify-build.js success
 
   create-release:
     needs: [build-android, build-ios]
@@ -157,3 +168,9 @@ jobs:
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Send release notification
+        env:
+          TEAMS_WEBHOOK_URL: ${{ secrets.TEAMS_WEBHOOK_URL }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: node scripts/notify-build.js release
