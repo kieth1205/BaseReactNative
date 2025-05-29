@@ -1,0 +1,17 @@
+{
+  "app": {
+    "name": "Pokemon Trading",
+    "version": "1.0.0"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Retry",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "search": "Search",
+    "noResults": "No results found"
+  }
+}

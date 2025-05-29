@@ -1,0 +1,24 @@
+{
+  "list": {
+    "title": "Pokemon List",
+    "search": "Search Pokemon",
+    "noResults": "No Pokemon found",
+    "loadMore": "Load More"
+  },
+  "detail": {
+    "stats": "Stats",
+    "abilities": "Abilities",
+    "moves": "Moves",
+    "types": "Types",
+    "height": "Height",
+    "weight": "Weight",
+    "baseExperience": "Base Experience"
+  },
+  "trade": {
+    "title": "Trade Pokemon",
+    "offer": "Your Offer",
+    "request": "Requested Pokemon",
+    "confirm": "Confirm Trade",
+    "cancel": "Cancel Trade"
+  }
+}

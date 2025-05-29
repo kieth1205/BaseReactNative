@@ -1,17 +1,48 @@
 {
-  "name": "BaseReactNative",
+  "name": "reactnativeboilerplate",
   "version": "0.0.1",
   "private": true,
+  "type": "module",
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",
-    "test": "jest"
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:ci": "jest --ci --coverage --maxWorkers=2",
+    "build:ios:dev": "node scripts/build-ios.js development",
+    "build:ios:staging": "node scripts/build-ios.js staging",
+    "build:ios:prod": "node scripts/build-ios.js production",
+    "build:ios:dev:release": "node scripts/build-ios.js development release",
+    "build:ios:staging:release": "node scripts/build-ios.js staging release",
+    "build:ios:prod:release": "node scripts/build-ios.js production release",
+    "todo": "node scripts/todo-manager.js",
+    "todo:watch": "nodemon --watch src --ext ts,tsx --exec 'yarn todo'",
+    "prepare": "husky install",
+    "lint-staged": "lint-staged",
+    "squash": "node scripts/squash-commits.js",
+    "docs:features": "node scripts/generate-feature-docs.js"
   },
   "dependencies": {
+    "@gorhom/bottom-sheet": "^5.1.5",
+    "@react-navigation/bottom-tabs": "^7.3.13",
+    "@react-navigation/native": "^7.1.9",
+    "@react-navigation/native-stack": "^7.3.13",
+    "@tanstack/react-query": "^5.79.0",
+    "axios": "^1.9.0",
+    "i18next": "^25.2.1",
     "react": "19.0.0",
-    "react-native": "0.79.2"
+    "react-i18next": "^15.5.2",
+    "react-native": "0.79.2",
+    "react-native-gesture-handler": "^2.25.0",
+    "react-native-localize": "^3.4.1",
+    "react-native-mmkv": "^3.2.0",
+    "react-native-reanimated": "^3.17.5",
+    "react-native-safe-area-context": "^5.4.1",
+    "react-native-screens": "^4.11.1",
+    "react-native-vector-icons": "^10.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
@@ -27,13 +58,34 @@
     "@types/jest": "^29.5.13",
     "@types/react": "^19.0.0",
     "@types/react-test-renderer": "^19.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.33.0",
+    "@typescript-eslint/parser": "^8.33.0",
+    "babel-plugin-module-resolver": "^5.0.2",
     "eslint": "^8.19.0",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-prettier": "^5.4.0",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
     "jest": "^29.6.3",
-    "prettier": "2.8.8",
+    "prettier": "^3.5.3",
     "react-test-renderer": "19.0.0",
     "typescript": "5.0.4"
   },
   "engines": {
     "node": ">=18"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md}": [
+      "prettier --write"
+    ]
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
   }
 }

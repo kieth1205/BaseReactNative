@@ -1,0 +1,24 @@
+{
+  "list": {
+    "title": "Danh sách Pokemon",
+    "search": "Tìm Pokemon",
+    "noResults": "Không tìm thấy Pokemon",
+    "loadMore": "Tải thêm"
+  },
+  "detail": {
+    "stats": "Chỉ số",
+    "abilities": "Khả năng",
+    "moves": "Chiêu thức",
+    "types": "Hệ",
+    "height": "Chiều cao",
+    "weight": "Cân nặng",
+    "baseExperience": "Kinh nghiệm cơ bản"
+  },
+  "trade": {
+    "title": "Trao đổi Pokemon",
+    "offer": "Pokemon của bạn",
+    "request": "Pokemon yêu cầu",
+    "confirm": "Xác nhận trao đổi",
+    "cancel": "Hủy trao đổi"
+  }
+}

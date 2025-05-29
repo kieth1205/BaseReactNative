@@ -1,97 +1,204 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Pokemon Trading App
 
-# Getting Started
+## Table of Contents
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+- [Project Structure](#project-structure)
+- [Performance Optimization](#performance-optimization)
+- [Naming Conventions](#naming-conventions)
+- [Development Guidelines](#development-guidelines)
+- [Deployment Process](#deployment-process)
 
-## Step 1: Start Metro
+## Project Structure
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
-
-To start the Metro dev server, run the following command from the root of your React Native project:
-
-```sh
-# Using npm
-npm start
-
-# OR using Yarn
-yarn start
+```
+src/
+├── configs/           # App configurations
+├── features/          # Feature-based modules
+│   ├── pokemon/      # Pokemon feature
+│   ├── trade/        # Trading feature
+│   └── auth/         # Authentication feature
+├── navigation/        # Navigation configuration
+├── providers/         # Context providers
+├── services/         # API and storage services
+├── shared/           # Shared components and utilities
+└── theme/            # Theme configuration
 ```
 
-## Step 2: Build and run your app
+## Performance Optimization
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+### 1. React Native Performance
 
-### Android
+- Use `React.memo()` for components that re-render frequently
+- Implement `useCallback` for function props
+- Use `useMemo` for expensive computations
+- Avoid inline styles and functions in render
+- Use `FlatList` with proper `keyExtractor` and `getItemLayout`
 
-```sh
-# Using npm
-npm run android
+### 2. Image Optimization
 
-# OR using Yarn
-yarn android
+- Use `FastImage` for better image caching
+- Implement progressive image loading
+- Compress images before uploading
+- Use appropriate image formats (WebP for Android)
+
+### 3. State Management
+
+- Use React Query for server state
+- Implement proper caching strategies
+- Use MMKV for local storage
+- Avoid unnecessary re-renders
+
+### 4. Network Optimization
+
+- Implement request caching
+- Use pagination for large lists
+- Implement proper error handling
+- Use compression for API responses
+
+## Naming Conventions
+
+### 1. Files and Directories
+
+- Feature directories: lowercase with hyphens (e.g., `pokemon-trade`)
+- Component files: PascalCase (e.g., `PokemonCard.tsx`)
+- Hook files: camelCase with 'use' prefix (e.g., `usePokemon.ts`)
+- Service files: camelCase (e.g., `pokemonService.ts`)
+- Type files: PascalCase with 'Type' suffix (e.g., `PokemonType.ts`)
+
+### 2. Code Naming
+
+- Components: PascalCase
+- Functions: camelCase
+- Constants: UPPER_SNAKE_CASE
+- Types/Interfaces: PascalCase
+- Variables: camelCase
+- Private methods: \_camelCase
+
+### 3. Import Aliases
+
+```typescript
+// Use these aliases for imports
+import { Component } from '@components';
+import { Screen } from '@screens';
+import { Service } from '@services';
+import { Hook } from '@hooks';
+import { Type } from '@types';
 ```
 
-### iOS
+## Development Guidelines
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
+### 1. Code Style
 
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+- Use TypeScript for type safety
+- Follow ESLint and Prettier configurations
+- Write meaningful comments
+- Keep functions small and focused
+- Use proper error handling
 
-```sh
-bundle install
+### 2. Component Structure
+
+```typescript
+// Component template
+import React from 'react';
+import { View, Text } from 'react-native';
+import { styles } from './styles';
+import { useTheme } from '@providers/ThemeProvider';
+
+interface Props {
+  // Props definition
+}
+
+export const Component: React.FC<Props> = ({ prop1, prop2 }) => {
+  const { colors } = useTheme();
+
+  return (
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <Text style={{ color: colors.text }}>Content</Text>
+    </View>
+  );
+};
 ```
 
-Then, and every time you update your native dependencies, run:
+### 3. State Management
 
-```sh
-bundle exec pod install
+```typescript
+// React Query usage
+const { data, isLoading } = useQuery({
+  queryKey: [QUERY_KEYS.POKEMON.LIST],
+  queryFn: () => pokemonService.getList(),
+});
+
+// Local state
+const [state, setState] = useState<StateType>(initialState);
 ```
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+## Deployment Process
 
-```sh
-# Using npm
-npm run ios
+### 1. Environment Setup
 
-# OR using Yarn
-yarn ios
+```bash
+# Install dependencies
+yarn install
+
+# Setup environment variables
+cp .env.example .env
 ```
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+### 2. Building for Production
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+```bash
+# Android
+yarn build:android --env production
 
-## Step 3: Modify your app
+# iOS
+yarn build:ios --env production
+```
 
-Now that you have successfully run the app, let's make changes!
+### 3. Version Management
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+- Follow semantic versioning (MAJOR.MINOR.PATCH)
+- Update version in package.json
+- Update build numbers in native projects
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+### 4. Release Checklist
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+- [ ] Run all tests
+- [ ] Check performance metrics
+- [ ] Verify all features
+- [ ] Update documentation
+- [ ] Create release notes
+- [ ] Build production version
+- [ ] Test production build
+- [ ] Deploy to stores
 
-## Congratulations! :tada:
+### 5. CI/CD Pipeline
 
-You've successfully run and modified your React Native App. :partying_face:
+```yaml
+# Example GitHub Actions workflow
+name: Deploy
+on:
+  push:
+    tags:
+      - 'v*'
 
-### Now what?
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+      - name: Install dependencies
+        run: yarn install
+      - name: Build Android
+        run: yarn build:android
+      - name: Build iOS
+        run: yarn build:ios
+```
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
+## Additional Resources
 
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+- [React Native Documentation](https://reactnative.dev/docs/getting-started)
+- [TypeScript Documentation](https://www.typescriptlang.org/docs/)
+- [React Query Documentation](https://tanstack.com/query/latest)
+- [MMKV Documentation](https://github.com/mrousavy/react-native-mmkv)

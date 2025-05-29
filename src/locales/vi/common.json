@@ -1,0 +1,17 @@
+{
+  "app": {
+    "name": "Pokemon Trading",
+    "version": "1.0.0"
+  },
+  "common": {
+    "loading": "Đang tải...",
+    "error": "Đã xảy ra lỗi",
+    "retry": "Thử lại",
+    "cancel": "Hủy",
+    "save": "Lưu",
+    "delete": "Xóa",
+    "edit": "Sửa",
+    "search": "Tìm kiếm",
+    "noResults": "Không tìm thấy kết quả"
+  }
+}
